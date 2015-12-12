@@ -9,8 +9,7 @@ def reformat_log(log):
         json_acceptable_string = log.replace("'", "\"")
         json_log = json.loads(json_acceptable_string)
         json_log['time'] = str(calendar.timegm(gmtime()))
-        print str(randint(0,len(input_lang) - 1))
-        json_log['request']['RequestList']['ecomDataList']['olang'] = input_lang[randint(0,len(input_lang) - 1)]
+        json_log['request']['RequestList'][0]['ecomDataList'][0]['olang'] = input_lang[randint(0,len(input_lang) - 1)]
         json_log['request']['tlangList'] = output_lang[randint(0,len(output_lang) - 1)]
         return json.dumps(json_log)
 
