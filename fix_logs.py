@@ -10,19 +10,23 @@ api_keys = '44615f2b6ddbc6228c254673148ac0425642', '44615f2b6ddbc6228c254673148a
 def reformat_log(log):
         rand_api_key = choice(api_keys)
         json_acceptable_string = log.replace("'", "\"")
-        json_log = json.loads(json_acceptable_string)
+        json_log = {}
+        try:
+            json_log = json.loads(json_acceptable_string)
 
-        #FIX TIME
-        json_log['time'] = str(calendar.timegm(gmtime()))
+            #FIX TIME
+            json_log['time'] = str(calendar.timegm(gmtime()))
 
-        # FIX REQUEST
-        json_log['request']['RequestList'][0]['ecomDataList'] = json_log['request']['RequestList'][0]['ecomDataList'][0]
-        json_log['request']['RequestList'] = json_log['request']['RequestList'][0]
-        json_log['request']['tlangList'] = json_log['request']['tlangList'][0]
+            # FIX REQUEST
+            json_log['request']['RequestList'][0]['ecomDataList'] = json_log['request']['RequestList'][0]['ecomDataList'][0]
+            json_log['request']['RequestList'] = json_log['request']['RequestList'][0]
+            json_log['request']['tlangList'] = json_log['request']['tlangList'][0]
 
-        #FIX RESPONSE
-        json_log['response']['map']['data']['myArrayList'] = json_log['response']['map']['data']['myArrayList'][0]['myArrayList'][0]
-        print '.',
+            #FIX RESPONSE
+            json_log['response']['map']['data']['myArrayList'] = json_log['response']['map']['data']['myArrayList'][0]['myArrayList'][0]
+            print '.',
+        except:
+            print '0',
         sys.stdout.flush()
         return json.dumps(json_log)
 
