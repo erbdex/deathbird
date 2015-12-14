@@ -5,6 +5,56 @@ import calendar, json, ast, sys, yaml
 input_lang = ['hindi', 'tamil', 'hindi', 'tamil', 'malayalam', 'konkani', 'bhojpuri', 'punjabi', 'bhojpuri', 'punjabi', 'bhojpuri', 'punjabi', 'bhojpuri', 'punjabi', 'bhojpuri', 'punjabi', 'marwari', 'marathi', 'marathi', 'marathi']
 output_lang = ['english', 'telugu', 'oriya']
 
+'''
+"data": {
+          "myArrayList": [
+            {
+              "myArrayList": [
+                {
+                  "map": {
+                    "loc_val": {
+                      "map": {
+                        "hindi": "ऍब्सोल्यूट मार्ट ब्लैक हाइ हील्ड पम्पस"
+                      }
+                    },
+                    "loc_attr": {
+                      "map": {
+                        "hindi": "शीर्षक"
+                      }
+                    },
+                    "attr": "title",
+                    "value": "Absolute Mart Black High Heeled Pumps"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+
+
+
+"data": {
+          "myArrayList": {
+            "map": {
+              "loc_val": {
+                "map": {
+                  "hindi": "ऍब्सोल्यूट मार्ट ब्लैक हाइ हील्ड पम्पस"
+                }
+              },
+              "loc_attr": {
+                "map": {
+                  "hindi": "शीर्षक"
+                }
+              },
+              "attr": "title",
+              "value": "Absolute Mart Black High Heeled Pumps"
+            }
+          }
+        }
+
+'''
+
+
 def reformat_log(log):
         json_acceptable_string = log.replace("'", "\"")
         json_log = json.loads(json_acceptable_string)
