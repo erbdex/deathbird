@@ -61,12 +61,25 @@ def reformat_log(log):
         rand_api_key = choice(api_keys)
         json_acceptable_string = log.replace("'", "\"")
         json_log = json.loads(json_acceptable_string)
+
+        #FIX TIME
         json_log['time'] = str(calendar.timegm(gmtime()))
+
+        # FIX REQUEST
+        json_log['request']['RequestList'][0]['ecomDataList'] = json_log['request']['RequestList'][0]['ecomDataList'][0]
+        json_log['request']['RequestList'] = json_log['request']['RequestList'][0]
+        json_log['request']['tlangList'] = json_log['request']['tlangList'][0]
+
+        #FIX RESPONSE
+        json_log['response']['map']['data']['myArrayList'] = json_log['response']['map']['data']['myArrayList'][0]['myArrayList'][0]
+
+'''
         json_log['request']['RequestList'][0]['ecomDataList'][0]['olang'] = choice(input_lang)
         json_log['request']['tlangList'] = choice(output_lang)
         json_log['request']['apiKey'] = rand_api_key
         json_log['apikey'] = rand_api_key
         json_log['response']['map']['apikey'] = rand_api_key
+'''
         print '.',
         sys.stdout.flush()
         return json.dumps(json_log)
@@ -75,12 +88,12 @@ def random_sleep():
         sleep(0.01 * randint(0, 50))
 
 def parse_from_file():
-        reader = open('clean_logs.log', 'r')
-        writer = open('test.log', 'a', 0)
+        reader = open(sys.argv[1], 'r')
+        writer = open(sys.argv[2], 'a', 0)
         while True:
             reader.seek(0)
             for line in reader:
-                 random_sleep()
+            #     random_sleep()
                  formatted_log = reformat_log(line)
                  writer.write(formatted_log + '\n')
 
