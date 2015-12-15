@@ -6,6 +6,9 @@ from time import sleep
 from random import randint
 import json, sys
 
+file_to_read_from = str()
+file_to_write_to  = str()
+
 
 def fix_log_timestamp(time_in_log):
     # Converting time to a second epoch.
@@ -55,10 +58,33 @@ def reformat_log(logged_line):
 def random_sleep():
     sleep(0.01 * randint(0, 50))
 
+def read_new_lines_from_modified_source(src):
+    know_where_we_left = '__magic__'
+    reader = open(src, 'r')
+    pass
+
+def write_new_lines_to_target(target):
+    pass
+
+def file_modified_do_your_shit(src, target):
+    read_new_lines_from_modified_source(src)
+    write_new_lines_to_target(target)
+
+def initiate_watchdog(src, target):
+    # Triggers call_handler_file_edited in case the file undergoes mods.
+    file_modified_do_your_shit(src, target)
 
 def parse_from_file():
-    reader = open(sys.argv[1], 'r')
-    writer = open(sys.argv[2], 'a', 0)
+    file_to_read_from = sys.argv[1]
+    file_to_write_to  = sys.argv[2]
+
+    initiate_watchdog(file_to_read_from, file_to_write_to)
+
+
+    # Flow ends here(?).
+
+    reader = open(file_to_read_from, 'r')
+    writer = open(file_to_write_to, 'a', 0)
     try:
         reader.seek(0)
         for line in reader:
