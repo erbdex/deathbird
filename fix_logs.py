@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import sys, reverie
+import sys, reverie, watchman
 
 MODE_READ = 'r'
 MODE_APPEND = 'a'
@@ -34,9 +34,12 @@ class Fixxer():
     def file_modified(self):
         self.fetch_read_write()
 
+    def is_file_monitored(self, filename):
+        return (filename == self.file_to_read_from)
+
     def initiate_watchdog(self):
         # Triggers call_handler_file_edited in case the file undergoes mods.
-
+        watchman_obj = watchman.watch_logs([self.file_to_read_from])
 
 
 

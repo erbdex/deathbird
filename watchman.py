@@ -6,7 +6,10 @@ from watchdog.events import FileSystemEventHandler
 
 class MyHandler(FileSystemEventHandler):
     def on_modified(self, event):
-        print "Got: {0}".format(event.src_path)
+        print "Modified: {0}".format(event.src_path)
+
+    def on_created(self, event):
+        print 'Created: {0}'.format(event.src_path)
 
 
 def watch_logs():
