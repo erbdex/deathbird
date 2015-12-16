@@ -1,4 +1,4 @@
-import json, time, random
+import json, time, random, traceback, sys
 
 class ReverieParser():
     def __init__(self):
@@ -23,7 +23,11 @@ class ReverieParser():
 
     def extract_json_from_log(self, log):
         # The logged line is-- "2015-12-11 08:17:34 - {..valid..json..}\n"
+        if log[-1:] == '\n':
+            log.rstrip()
+
         delimiter = '- '
+        print log
         return log.split(delimiter)[1]
 
 
@@ -42,9 +46,14 @@ class ReverieParser():
             fixed_log = self.fix_nested_objects(json_log)
         except Exception as e:
             print 'Error: \"{0}\" Trace: \"{1}\"'.format(log, e)
+            traceback.print_exc(file=sys.stdout)
+
 
         return json.dumps(fixed_log)
 
 
     def reverie_sleep(self):
         time.sleep(0.01 * random.randint(0, 50))
+
+    def test_format(self, log):
+        return log
