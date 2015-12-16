@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from watchdog.events import FileSystemEventHandler
-
+import traceback, sys, time
 import fix_logs
 
 
@@ -15,7 +15,7 @@ class WatchmanHandler(FileSystemEventHandler):
             # Do verify if this is keeping stray file descriptors open.
             return
 
-        print "Modified: {0}".format(modified_file)
+        # print "Modified: {0}".format(modified_file)
         self.handle_modification_event(modified_file, self.target)
 
     def on_created(self, event):
@@ -32,9 +32,10 @@ class WatchmanHandler(FileSystemEventHandler):
         return file in self.files_to_watch
 
     def handle_modification_event(self, src, target):
-        print 'Modification in src: {0}. Destination: {1}. Updating.'.format(src, target)
+        print '[{0}] Modification in src: {1}. Destination: {2}.'.format(time.time() , src, target)
         try:
             fixxer = fix_logs.Fixxer(src, target)
             fixxer.file_modified()
         except Exception as e:
             print 'Exception : {0}'.format(e)
+            traceback.print_exc(file=sys.stdout)

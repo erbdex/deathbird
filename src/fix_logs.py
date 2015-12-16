@@ -9,7 +9,6 @@ NEWLINE = '\n'
 
 class Fixxer():
     def __init__(self, src, target):
-        print 'Called with arguments: {0} {1}'.format(src, target)
         self.file_to_read_from = src
         self.file_to_write_to  = target
         self.parser = reverie.ReverieParser()
@@ -32,7 +31,7 @@ class Fixxer():
 
     def write_new_lines_to_target(self, log, target):
         writer = open(target, MODE_APPEND, FLUSH_IMMEDIATELY)
-        writer.write(log)
+        writer.write(log + NEWLINE)
 
     def file_modified(self):
         self.fetch_read_write()
