@@ -17,7 +17,6 @@ def watch_logs(files_to_watch, target):
     observer = Observer()
     handler.watch(file)
     handler.write(target)
-
     observer.schedule(handler, path=directory_to_watch, recursive=False)
     observer.start()
     try:

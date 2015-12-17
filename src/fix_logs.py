@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import reverie
+import reverie, json, os
 
 MODE_READ = 'r'
+MODE_READ_AND_WRITE = 'r+'
 MODE_APPEND = 'a'
 FLUSH_IMMEDIATELY = 0
 NEWLINE = '\n'
-
+POS_FILE = '/tmp/.watchman.pos'
+POS_FILE_DELIMITER = '|'
 class Fixxer():
     def __init__(self, src, target):
         self.file_to_read_from = src
@@ -17,6 +19,7 @@ class Fixxer():
         # __magic__ally know where we left. Right now beginning from zero.
         # Make this persistent. in the future.
         pos = self.get_last_position(self.file_to_read_from)
+        print 'POS VALUE: ', pos
 
         reader = open(self.file_to_read_from, MODE_READ)
         # line wise counter or character wise(?) Assuming line wise for now.
@@ -29,6 +32,10 @@ class Fixxer():
             formatted_log = self.parser.reformat_log(line)
             self.write_new_lines_to_target(formatted_log, self.file_to_write_to)
 
+        # Write last position into pos file
+        print 'Writing bytes read to pos_file'
+        self.set_latest_position(reader.tell(), self.file_to_read_from)
+
     def write_new_lines_to_target(self, log, target):
         writer = open(target, MODE_APPEND, FLUSH_IMMEDIATELY)
         writer.write(log + NEWLINE)
@@ -37,8 +44,68 @@ class Fixxer():
         self.fetch_read_write()
 
     def get_last_position(self, src):
-        return 0
-        pass
+        pos_file_position = 0
+        try:
+
+            # create a empty dict
+            pos_dict = {}
+
+            # parse the pos_file & then populate the dict
+            with open(POS_FILE, MODE_READ) as pos_file:
+                for line in pos_file:
+                    tokens = line.split(POS_FILE_DELIMITER)
+                    if len(tokens) == 2:
+                        pos_dict[tokens[0]] = int(tokens[1].rstrip('\n'))
+
+            if src in pos_dict.keys():
+                pos_file_position = pos_dict[src]
+            else:
+                # pos file doesnt have the files entry, its probably a new file
+                pass
+        except IOError as ioe:
+            if ioe.errno == 2:
+                # POS_FILE doesnt exist, creating it.
+                newly_created_pos_file = open(POS_FILE, 'a')
+                newly_created_pos_file.close()
+                os.fsync(newly_created_pos_file.fileno())
+            else:
+                print 'Exception : {0}'.format(ioe)
+                traceback.print_exc(file=sys.stdout)
+
+        except Exception as e:
+            print 'Exception : {0}'.format(e)
+            traceback.print_exc(file=sys.stdout)
+
+        # Return back the srcs last position only if it is found in the pos file, otherwise return 0
+        return pos_file_position
 
     def set_latest_position(self, pos, src):
-        pass
+        update_pos = False
+        try:
+
+            # Create a empty dict
+            pos_dict = {}
+
+            # Parse the pos_file & then populate the dict
+            with open(POS_FILE, MODE_READ_AND_WRITE, FLUSH_IMMEDIATELY) as pos_file:
+                for line in pos_file:
+                    tokens = line.split(POS_FILE_DELIMITER)
+                    if len(tokens) == 2:
+                        pos_dict[tokens[0]] = int(tokens[1].rstrip('\n'))
+
+                # Update latest position of src
+                pos_dict[src] = pos
+
+                # Write data back to pos file
+                pos_file.seek(0)
+                for key in pos_dict:
+                    pos_file.write(key + POS_FILE_DELIMITER + str(pos_dict[key]) + NEWLINE)
+
+                # Flush all the buffers
+                pos_file.flush()
+                os.fsync(pos_file.fileno())
+
+        except Exception as e:
+            print 'Exception : {0}'.format(e)
+            #traceback.print_exc(file=sys.stdout)
+

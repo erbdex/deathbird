@@ -20,7 +20,6 @@ class WatchmanHandler(FileSystemEventHandler):
 
     def on_created(self, event):
         pass
-        # print 'Created: {0}'.format(event.src_path)
 
     def watch(self, file):
         self.files_to_watch.append(file)
