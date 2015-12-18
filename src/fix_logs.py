@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import reverie, json, os
+import reverie, json, os, logging
 
 MODE_READ = 'r'
 MODE_READ_AND_WRITE = 'r+'
@@ -19,7 +19,7 @@ class Fixxer():
         # __magic__ally know where we left. Right now beginning from zero.
         # Make this persistent. in the future.
         pos = self.get_last_position(self.file_to_read_from)
-        print 'POS VALUE: ', pos
+        logging.info('POS VALUE: ' + str(pos))
 
         reader = open(self.file_to_read_from, MODE_READ)
         # line wise counter or character wise(?) Assuming line wise for now.
@@ -33,7 +33,7 @@ class Fixxer():
             self.write_new_lines_to_target(formatted_log, self.file_to_write_to)
 
         # Write last position into pos file
-        print 'Writing bytes read to pos_file'
+        logging.info('Writing bytes read to pos_file')
         self.set_latest_position(reader.tell(), self.file_to_read_from)
 
     def write_new_lines_to_target(self, log, target):
@@ -77,18 +77,17 @@ class Fixxer():
                 os.fsync(newly_created_pos_file.fileno())
                 newly_created_pos_file.close()
             else:
-                print 'Exception : {0}'.format(ioe)
-                traceback.print_exc(file=sys.stdout)
+                logging.exception('Exception :')
+                #traceback.print_exc(file=sys.stdout)
 
         except Exception as e:
-            print 'Exception : {0}'.format(e)
-            traceback.print_exc(file=sys.stdout)
+            logging.exception('Exception :')
+            #traceback.print_exc(file=sys.stdout)
 
         # Return back the srcs last position only if it is found in the pos file, otherwise return 0
         return pos_file_position
 
     def set_latest_position(self, pos, src):
-        update_pos = False
         try:
 
             # Create a empty dict
@@ -115,6 +114,6 @@ class Fixxer():
                 os.fsync(pos_file.fileno())
 
         except Exception as e:
-            print 'Exception : {0}'.format(e)
+            logging.exception('Exception :')
             #traceback.print_exc(file=sys.stdout)
 
