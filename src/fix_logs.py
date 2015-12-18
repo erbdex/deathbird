@@ -66,8 +66,8 @@ class Fixxer():
             if ioe.errno == 2:
                 # POS_FILE doesnt exist, creating it.
                 newly_created_pos_file = open(POS_FILE, 'a')
-                newly_created_pos_file.close()
                 os.fsync(newly_created_pos_file.fileno())
+                newly_created_pos_file.close()
             else:
                 print 'Exception : {0}'.format(ioe)
                 traceback.print_exc(file=sys.stdout)
