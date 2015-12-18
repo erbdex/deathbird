@@ -27,7 +27,7 @@ class Fixxer():
 
         # Gather and push across as many lines as possible-
         for line in reader:
-            self.parser.reverie_sleep()
+            # self.parser.reverie_sleep()
             # formatted_log = self.parser.test_format(line)
             formatted_log = self.parser.reformat_log(line)
             self.write_new_lines_to_target(formatted_log, self.file_to_write_to)
@@ -58,7 +58,15 @@ class Fixxer():
                         pos_dict[tokens[0]] = int(tokens[1].rstrip('\n'))
 
             if src in pos_dict.keys():
-                pos_file_position = pos_dict[src]
+                # Open the src file, get its total byte count
+                with open(src, MODE_READ) as src_file:
+                    # Move file pointer to the end
+                    src_file.seek(0, 2)
+                    # See if file is smaller than its last noted size, if yes return 0 for position
+                    if pos_dict[src] >= src_file.tell():
+                        pos_file_position = 0
+                    else:
+                        pos_file_position = pos_dict[src]
             else:
                 # pos file doesnt have the files entry, its probably a new file
                 pass
@@ -98,6 +106,7 @@ class Fixxer():
 
                 # Write data back to pos file
                 pos_file.seek(0)
+                pos_file.truncate()
                 for key in pos_dict:
                     pos_file.write(key + POS_FILE_DELIMITER + str(pos_dict[key]) + NEWLINE)
 

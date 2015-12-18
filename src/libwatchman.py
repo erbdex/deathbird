@@ -14,7 +14,7 @@ def watch_logs(files_to_watch, target):
     directory_to_watch = parent_directory(file)
 
     handler = watchman.WatchmanHandler()
-    observer = Observer()
+    observer = Observer(10)
     handler.watch(file)
     handler.write(target)
     observer.schedule(handler, path=directory_to_watch, recursive=False)

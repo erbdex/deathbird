@@ -27,7 +27,6 @@ class ReverieParser():
             log.rstrip()
 
         delimiter = '- '
-        print 'WHOLE LOG: ', log
         return log.split(delimiter)[1]
 
 
