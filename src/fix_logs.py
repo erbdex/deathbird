@@ -78,11 +78,11 @@ class Fixxer():
                 newly_created_pos_file.close()
             else:
                 logging.exception('Exception :')
-                #traceback.print_exc(file=sys.stdout)
+                traceback.print_exc(file=sys.stdout)
 
         except Exception as e:
             logging.exception('Exception :')
-            #traceback.print_exc(file=sys.stdout)
+            traceback.print_exc(file=sys.stdout)
 
         # Return back the srcs last position only if it is found in the pos file, otherwise return 0
         return pos_file_position
@@ -115,5 +115,5 @@ class Fixxer():
 
         except Exception as e:
             logging.exception('Exception :')
-            #traceback.print_exc(file=sys.stdout)
+            traceback.print_exc(file=sys.stdout)
 

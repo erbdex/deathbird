@@ -1,4 +1,4 @@
-import json, time, random, traceback, sys
+import json, time, random, traceback, sys, logging
 
 class ReverieParser():
     def __init__(self):
@@ -31,22 +31,26 @@ class ReverieParser():
 
 
     def reformat_log(self, logged_line):
-        log = self.extract_json_from_log(logged_line)
-        json_acceptable_string = log.replace("'", "\"")
+        log = ''
         json_log = fixed_log = dict()
         try:
-            json_log = json.loads(json_acceptable_string)
+            log = self.extract_json_from_log(logged_line)
+            json_acceptable_string = log.replace("'", "\"")
+            try:
+                json_log = json.loads(json_acceptable_string)
 
-            # The log right now logs the second epoch with the last three ms digits appended. Translates to ~47000 AD.
-            timestamp_logged = json_log['time']
-            json_log['time'] = self.fix_log_timestamp(timestamp_logged)
+                # The log right now logs the second epoch with the last three ms digits appended. Translates to ~47000 AD.
+                timestamp_logged = json_log['time']
+                json_log['time'] = self.fix_log_timestamp(timestamp_logged)
 
-            # Flattening request object nested within array so that Kibana can micro-analyse it.
-            fixed_log = self.fix_nested_objects(json_log)
+                # Flattening request object nested within array so that Kibana can micro-analyse it.
+                fixed_log = self.fix_nested_objects(json_log)
+            except Exception as e:
+                logging.exception('Exception :')
+                traceback.print_exc(file=sys.stdout)
         except Exception as e:
-            print 'Error: \"{0}\" Trace: \"{1}\"'.format(log, e)
+            logging.exception('Exception :')
             traceback.print_exc(file=sys.stdout)
-
 
         return json.dumps(fixed_log)
 
